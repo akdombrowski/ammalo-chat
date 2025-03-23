@@ -1,47 +1,44 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
-import { toast } from '@/components/toast';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
+import { toast } from "@/components/toast";
 
-import { AuthForm } from '@/components/auth-form';
-import { SubmitButton } from '@/components/submit-button';
+import { AuthForm } from "@/components/auth-form";
+import { SubmitButton } from "@/components/submit-button";
 
-import { login, type LoginActionState } from '../actions';
+import { login, type LoginActionState } from "../actions";
 
 export default function Page() {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
-  const [state, formAction] = useActionState<LoginActionState, FormData>(
-    login,
-    {
-      status: 'idle',
-    },
-  );
+  const [state, formAction] = useActionState<LoginActionState, FormData>(login, {
+    status: "idle",
+  });
 
   useEffect(() => {
-    if (state.status === 'failed') {
+    if (state.status === "failed") {
       toast({
-        type: 'error',
-        description: 'Invalid credentials!',
+        type: "error",
+        description: "Invalid credentials!",
       });
-    } else if (state.status === 'invalid_data') {
+    } else if (state.status === "invalid_data") {
       toast({
-        type: 'error',
-        description: 'Failed validating your submission!',
+        type: "error",
+        description: "Failed validating your submission!",
       });
-    } else if (state.status === 'success') {
+    } else if (state.status === "success") {
       setIsSuccessful(true);
       router.refresh();
     }
-  }, [state.status]);
+  }, [router, state.status]);
 
   const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get('email') as string);
+    setEmail(formData.get("email") as string);
     formAction(formData);
   };
 
@@ -54,7 +51,10 @@ export default function Page() {
             Use your email and password to sign in
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
+        <AuthForm
+          action={handleSubmit}
+          defaultEmail={email}
+        >
           <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
             {"Don't have an account? "}
@@ -64,7 +64,7 @@ export default function Page() {
             >
               Sign up
             </Link>
-            {' for free.'}
+            {" for free."}
           </p>
         </AuthForm>
       </div>
